@@ -1,8 +1,8 @@
 require "rspec"
 require "selenium-webdriver"
 
-installer_host = ENV["INSTALLER_HOST"] || "localhost"
-puts "D-Installer host: #{installer_host}"
+base_url = ENV["BASE_URL"] || "http://localhost:9090"
+puts "D-Installer host: #{base_url}"
 
 RSpec.configure do |config|
   config.before(:all) do
@@ -10,8 +10,7 @@ RSpec.configure do |config|
     @wait = Selenium::WebDriver::Wait.new(:timeout => 20)
     @driver = Selenium::WebDriver.for(:chrome)
 
-    @driver.navigate.to "https://#{installer_host}:9090/cockpit/@localhost/d-installer/index.html"
-    @delay = ENV["INSTALLER_DELAY"].to_i
+    @driver.navigate.to "#{base_url}/cockpit/@localhost/d-installer/index.html"
 
     # handle SSL certificate problem
     # TODO: this is for Chrome/Chromium browser, add more
@@ -31,14 +30,15 @@ RSpec.configure do |config|
       user = ENV["INSTALLER_USER"] || "root"
       pwd = ENV["INSTALLER_PASSWORD"] || "linux"
       login.send_keys(user)
-      sleep(@delay)
       password.send_keys(pwd)
-      sleep(@delay)
 
       @driver.find_element(id: "login-button").click
-      sleep(@delay)
     rescue Selenium::WebDriver::Error::NoSuchElementError
     end
+
+    # use this object to wait for some object to appear on the page
+    # https://www.selenium.dev/documentation/webdriver/waits/#implicit-wait
+    @driver.manage.timeouts.implicit_wait = 20
   end
 
   config.after(:all) do

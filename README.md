@@ -53,7 +53,7 @@ Then boot the installer image in a virtual machine.
 When the D-Installer is running you can run the tests using this command:
 
 ```shell
-bundle exec rake INSTALLER_HOST=<IP_ADDRESS>
+bundle exec rake BASE_URL=https://192.168.1.10:9090
 ```
 
 You can set some delay between the steps if you want to watch the steps with
